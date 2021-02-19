@@ -13,10 +13,16 @@
 Api_connectionAudioProcessorEditor::Api_connectionAudioProcessorEditor (Api_connectionAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
+    //
+    
     addAndMakeVisible(button);
     button.addListener(this);
     
-    addAndMakeVisible(loginComponent);
+    String respuesta = loginComponent.readJSON();
+    
+    if (respuesta == "") {
+        addAndMakeVisible(loginComponent);
+    }
     
     setSize (500, 400);
 

@@ -35,6 +35,9 @@ public:
     void recoverAuthUI();
     void buttonClicked(Button*) override;
     
+    void writeJSON(String inJSON);
+    String readJSON();
+    
 private:
     Label instructionLabel{"Enter your user ID and Password"}, userIDLabel {"User ID:"}, passwordLabel{"Password:"}, errorConnectionLabel, errorLabel;
     TextEditor userIDEditor, passwordEditor;

@@ -75,8 +75,6 @@ void LoginComponent::resized() {
     goBackButton.setCentreRelative(0.5f, 0.8f);
     tryAgainButton.setSize(100, 80);
     tryAgainButton.setCentreRelative(0.5f, 0.8f);
-    
-    
 }
 
 void LoginComponent::dismissAuthUI() {
@@ -99,7 +97,42 @@ void LoginComponent::dismissComponent() {
     setVisible(false);
 };
 
-void LoginComponent::buttonClicked(Button* buttonClicked) {
+void LoginComponent::writeJSON(String inJSON)
+{
+    String lPresetDirectory =
+    (juce::File::getSpecialLocation(juce::File::userDocumentsDirectory)).getFullPathName() + "/" + "Json Prueba";
+    
+    juce::File myJSONFile = juce::File(lPresetDirectory + "/" + "miprueba" + ".json");
+    
+    if (myJSONFile.exists())
+    {
+        myJSONFile.deleteFile();
+    }
+    
+    myJSONFile.create();
+    myJSONFile.appendText(inJSON);
+}
+
+String LoginComponent::readJSON()
+{
+    String lPresetDirectory =
+    (juce::File::getSpecialLocation(juce::File::userDocumentsDirectory)).getFullPathName() + "/" + "Json Prueba";
+    
+    juce::File myJSONFile = juce::File(lPresetDirectory + "/" + "miprueba" + ".json");
+    
+    if (myJSONFile.exists())
+    {
+        // Lees y regresas cadena JSON
+        String infoRead = myJSONFile.loadFileAsString();
+        DBG("INFO: " << infoRead);
+        return infoRead;
+    }
+    else
+      return "";
+}
+
+void LoginComponent::buttonClicked(Button* buttonClicked)
+{
     if(buttonClicked == &authButton) {
         String user = userIDEditor.getText();
         String password = passwordEditor.getText();
@@ -137,6 +170,8 @@ void LoginComponent::buttonClicked(Button* buttonClicked) {
                 DBG("Token:" << decodedStream.toString());
                 if(JSON::parse(decodedStream.toString(), parsedJson).wasOk()){
                     access = parsedJson["vst_access"];
+                    auto jsonString = JSON::toString (parsedJson);
+                    writeJSON(jsonString);
                 }
                 dismissComponent();
 
@@ -152,7 +187,7 @@ void LoginComponent::buttonClicked(Button* buttonClicked) {
             }
         }
     }
-    
+
     if(buttonClicked == &goBackButton) {
         recoverAuthUI();
         
