@@ -27,6 +27,7 @@ public:
     void resized() override;
     
     void buttonClicked(Button* buttonCliked) override;
+    int getMyTime();
 
 private:
     // This reference is provided as a quick way for your editor to

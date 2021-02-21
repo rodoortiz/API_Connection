@@ -124,7 +124,6 @@ String LoginComponent::readJSON()
     {
         // Lees y regresas cadena JSON
         String infoRead = myJSONFile.loadFileAsString();
-        DBG("INFO: " << infoRead);
         return infoRead;
     }
     else
@@ -140,7 +139,7 @@ void LoginComponent::buttonClicked(Button* buttonClicked)
         request.header("Content-Type", "application/json");
         
         response = request.post("https://samplehouse.herokuapp.com/api/user/login").field("email", user).field("password", password).execute();
-        DBG(response.bodyAsString);
+        //DBG(response.bodyAsString);
         
         if(response.result.failed()) {
             dismissAuthUI();
@@ -167,9 +166,9 @@ void LoginComponent::buttonClicked(Button* buttonClicked)
                 //Decoding payload
                 MemoryOutputStream decodedStream;
                 base64.convertFromBase64(decodedStream, tokenPayload);
-                DBG("Token:" << decodedStream.toString());
-                if(JSON::parse(decodedStream.toString(), parsedJson).wasOk()){
-                    access = parsedJson["vst_access"];
+                //DBG("Token:" << decodedStream.toString());
+                if(JSON::parse(decodedStream.toString(), parsedJson).wasOk())
+                {                    
                     auto jsonString = JSON::toString (parsedJson);
                     writeJSON(jsonString);
                 }

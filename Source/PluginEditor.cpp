@@ -13,19 +13,29 @@
 Api_connectionAudioProcessorEditor::Api_connectionAudioProcessorEditor (Api_connectionAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    //
-    
     addAndMakeVisible(button);
     button.addListener(this);
-    
+
     String respuesta = loginComponent.readJSON();
+    var parsedJSON = JSON::parse(respuesta);
     
-    if (respuesta == "") {
+    int actualTimeInSec = getMyTime();
+    int iat = int(parsedJSON["iat"]);
+    int exp = int(parsedJSON["exp"]);
+    
+    //OPC 1
+    if(!parsedJSON["vst_access"])
         addAndMakeVisible(loginComponent);
+    else{
+        if(!(actualTimeInSec >= iat && actualTimeInSec <= exp))
+            addAndMakeVisible(loginComponent);
     }
     
+    //OPC 2
+    /*if(respuesta == "")
+        addAndMakeVisible(loginComponent);*/
+    
     setSize (500, 400);
-
 }
 
 Api_connectionAudioProcessorEditor::~Api_connectionAudioProcessorEditor()
@@ -49,6 +59,11 @@ void Api_connectionAudioProcessorEditor::resized()
      
     button.centreWithSize(125, 100);
     button.setColour(TextButton::buttonColourId, Colours::red);
+}
+
+int Api_connectionAudioProcessorEditor::getMyTime()
+{
+    return (int)(Time::currentTimeMillis() / 1000);
 }
 
 void Api_connectionAudioProcessorEditor::buttonClicked(Button* buttonClicked) {
