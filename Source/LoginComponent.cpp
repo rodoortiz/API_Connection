@@ -168,12 +168,16 @@ void LoginComponent::buttonClicked(Button* buttonClicked)
                 base64.convertFromBase64(decodedStream, tokenPayload);
                 //DBG("Token:" << decodedStream.toString());
                 if(JSON::parse(decodedStream.toString(), parsedJson).wasOk())
-                {                    
-                    auto jsonString = JSON::toString (parsedJson);
-                    writeJSON(jsonString);
+                {
+                    if(parsedJson["vst_access"])
+                    {
+                        auto jsonString = JSON::toString (parsedJson);
+                        writeJSON(jsonString);
+                    }
                 }
-                dismissComponent();
-
+                else
+                    dismissComponent();
+                //dismissComponent();
             } else {
                 dismissAuthUI();
                 
