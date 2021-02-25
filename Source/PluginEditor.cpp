@@ -26,7 +26,7 @@ Api_connectionAudioProcessorEditor::Api_connectionAudioProcessorEditor (Api_conn
     //OPC 1
     if(!parsedJSON["vst_access"])
         addAndMakeVisible(loginComponent);
-    else{
+    else {
         if(!(actualTimeInSec >= iat && actualTimeInSec <= exp))
             addAndMakeVisible(loginComponent);
     }

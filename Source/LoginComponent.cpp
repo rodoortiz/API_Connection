@@ -139,7 +139,6 @@ void LoginComponent::buttonClicked(Button* buttonClicked)
         request.header("Content-Type", "application/json");
         
         response = request.post("https://samplehouse.herokuapp.com/api/user/login").field("email", user).field("password", password).execute();
-        //DBG(response.bodyAsString);
         
         if(response.result.failed()) {
             dismissAuthUI();
@@ -173,14 +172,16 @@ void LoginComponent::buttonClicked(Button* buttonClicked)
                     {
                         auto jsonString = JSON::toString (parsedJson);
                         writeJSON(jsonString);
+                        dismissComponent();
+                    } else {
+                        dismissAuthUI();
+                        errorLabel.setVisible(true);
+                        errorLabel.setText("Access denied, check subscription", dontSendNotification);
+                        tryAgainButton.setVisible(true);
                     }
                 }
-                else
-                    dismissComponent();
-                //dismissComponent();
             } else {
                 dismissAuthUI();
-                
                 if(JSON::parse(response.bodyAsString, parsedJson).wasOk()){
                     auto errorMessage = parsedJson["msg"];
                     errorLabel.setVisible(true);
@@ -193,14 +194,12 @@ void LoginComponent::buttonClicked(Button* buttonClicked)
 
     if(buttonClicked == &goBackButton) {
         recoverAuthUI();
-        
         errorConnectionLabel.setVisible(false);
         goBackButton.setVisible(false);
     }
     
     if(buttonClicked == &tryAgainButton) {
         recoverAuthUI();
-        
         errorLabel.setVisible(false);
         tryAgainButton.setVisible(false);
     }
