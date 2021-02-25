@@ -139,7 +139,7 @@ void LoginComponent::buttonClicked(Button* buttonClicked)
         request.header("Content-Type", "application/json");
         
         response = request.post("https://samplehouse.herokuapp.com/api/user/login").field("email", user).field("password", password).execute();
-        //DBG(response.bodyAsString);
+//        DBG(response.bodyAsString);
         
         if(response.result.failed()) {
             dismissAuthUI();
@@ -166,7 +166,7 @@ void LoginComponent::buttonClicked(Button* buttonClicked)
                 //Decoding payload
                 MemoryOutputStream decodedStream;
                 base64.convertFromBase64(decodedStream, tokenPayload);
-                //DBG("Token:" << decodedStream.toString());
+//                DBG("Token:" << decodedStream.toString());
                 if(JSON::parse(decodedStream.toString(), parsedJson).wasOk())
                 {
                     if(parsedJson["vst_access"])
@@ -174,8 +174,7 @@ void LoginComponent::buttonClicked(Button* buttonClicked)
                         auto jsonString = JSON::toString (parsedJson);
                         writeJSON(jsonString);
                     }
-                }
-                else
+                } else
                     dismissComponent();
                 //dismissComponent();
             } else {
