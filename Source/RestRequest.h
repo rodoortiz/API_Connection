@@ -35,17 +35,38 @@ public:
     RestRequest::Response execute ()
     {
         auto urlRequest = URL(endpoint);
-        bool hasFields = (fields.getProperties().size() > 0);
-        if (hasFields)
-        {
-            MemoryOutputStream output;
-
-            fields.writeAsJSON (output, 0, false, 20);
-            urlRequest = urlRequest.withPOSTData (output.toString());
-//            DBG(urlRequest.getPostData());
-        }
         
-        std::unique_ptr<InputStream> input (urlRequest.createInputStream (hasFields, nullptr, nullptr, stringPairArrayToHeaderString(headers), 3000, &response.headers, &response.status, 5, verb));
+//        bool hasFields = (fields.getProperties().size() > 0);
+//
+//        if (hasFields)
+//        {
+//            MemoryOutputStream output;
+//
+//            fields.writeAsJSON (output, 0, false, 20);
+//            if (verb == "POST")
+//                urlRequest = urlRequest.withPOSTData (output.toString());
+//            else
+//                urlRequest = urlRequest.withParameters(parameters);
+//
+////            DBG(urlRequest.toString(true));
+//        }
+        
+        bool hasParameters = (parameters.size() > 0);
+        
+        if (hasParameters)
+        {
+            urlRequest = urlRequest.withParameters(parameters);
+            
+            DBG(urlRequest.toString(true));
+        }
+
+        std::unique_ptr<InputStream> input (urlRequest.createInputStream (URL::InputStreamOptions(URL::ParameterHandling::inAddress)
+                                                                          .withExtraHeaders(stringPairArrayToHeaderString(headers))
+                                                                          .withConnectionTimeoutMs(3000)
+                                                                          .withResponseHeaders(&response.headers)
+                                                                          .withStatusCode(&response.status)
+                                                                          .withNumRedirectsToFollow(5)
+                                                                          .withHttpRequestCmd(verb)));
         
         response.result = checkInputStream(input);
         if (response.result.failed()) return response;
@@ -147,6 +168,7 @@ private:
     String verb;
     String endpoint;
     DynamicObject fields;
+    StringPairArray parameters;
     String bodyAsString;
     
     Result checkInputStream (std::unique_ptr<InputStream>& input)
